@@ -1,7 +1,8 @@
 require("dotenv").config();
 import { Client, Intents } from "discord.js";
 
-const CHANNEL_ID = "997518185785991229" as const;
+const NOTIFY_CHANNEL_ID = "997518185785991229" as const;
+const WATCH_CHANNEL_ID = "768854175022448721" as const;
 
 const client = new Client({
   // https://discordjs.guide/popular-topics/intents.html#enabling-intents
@@ -13,31 +14,21 @@ const client = new Client({
 });
 
 client.on("voiceStateUpdate", (oldState, newState) => {
-  if (oldState.channelId === null && newState.channelId !== null) {
-    if (oldState.member === null) return;
+  if (oldState.channelId !== null && newState.channelId === null) return;
+  if (newState.channelId !== WATCH_CHANNEL_ID) return;
+  if (newState.member === null) return;
 
-    const channel = oldState.member.guild.channels.cache.get(CHANNEL_ID);
+  const channel = newState.member.guild.channels.cache.get(NOTIFY_CHANNEL_ID);
 
-    // https://discordjs.guide/additional-info/changes-in-v13.html#channel
-    if (channel && channel.type === "GUILD_TEXT") {
-      channel.send(
-        `**参加** ${oldState.member.user.username}さんが入室しました。`
-      );
-    }
-  } else if (oldState.channelId !== null && newState.channelId === null) {
-    if (newState.member === null) return;
-
-    const channel = newState.member.guild.channels.cache.get(CHANNEL_ID);
-
-    if (channel && channel.type === "GUILD_TEXT") {
-      channel.send(
-        `**退出** ${newState.member.user.username}さんが退出しました。`
-      );
-    }
+  // https://discordjs.guide/additional-info/changes-in-v13.html#channel
+  if (channel !== undefined && channel.type === "GUILD_TEXT") {
+    channel.send(
+      `**参加** ${newState.member.displayName}さんが${channel.name}に入室しました。`
+    );
   }
 });
 
-client.login(process.env.TOKEN!);
+client.login(process.env.DISCORD_TOKEN!);
 client.once("ready", () => {
   console.log("起動完了");
 });
