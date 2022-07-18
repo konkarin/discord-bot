@@ -23,7 +23,7 @@ client.on("voiceStateUpdate", (oldState, newState) => {
   // https://discordjs.guide/additional-info/changes-in-v13.html#channel
   if (channel !== undefined && channel.type === "GUILD_TEXT") {
     channel.send(
-      `**参加** ${newState.member.displayName}さんが${channel.name}に入室しました。`
+      `${newState.member.displayName} さんが ${channel.name} に入室しました🥳`
     );
   }
 });
