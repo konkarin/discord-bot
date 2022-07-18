@@ -1,5 +1,6 @@
 # discord bot sample
 
 ```bash
-ts-node .
+npm i
+npm start
 ```
