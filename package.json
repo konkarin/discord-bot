@@ -6,6 +6,7 @@
     "start": "ts-node ."
   },
   "dependencies": {
+    "axios": "^0.27.2",
     "discord.js": "^13.8.1",
     "dotenv": "^16.0.1",
     "ts-node": "^10.9.1",

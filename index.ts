@@ -1,5 +1,6 @@
 require("dotenv").config();
 import { Client, Intents } from "discord.js";
+import axios from "axios";
 
 const NOTIFY_CHANNEL_ID = "997518185785991229" as const;
 const WATCH_CHANNEL_ID = "768854175022448721" as const;
@@ -13,18 +14,21 @@ const client = new Client({
   ],
 });
 
-client.on("voiceStateUpdate", (oldState, newState) => {
-  if (oldState.channelId !== null && newState.channelId === null) return;
-  if (newState.channelId !== WATCH_CHANNEL_ID) return;
-  if (newState.member === null) return;
+client.on("voiceStateUpdate", async (oldState, newState) => {
 
   const channel = newState.member.guild.channels.cache.get(NOTIFY_CHANNEL_ID);
 
   // https://discordjs.guide/additional-info/changes-in-v13.html#channel
   if (channel !== undefined && channel.type === "GUILD_TEXT") {
-    channel.send(
-      `${newState.member.displayName} さんが ${channel.name} に入室しました🥳`
-    );
+    const text = `${newState.member.displayName} さんが ${channel.name} に入室しました🥳`;
+
+    channel.send(text);
+
+    if (process.env.SLACK_WEBHOOK_URL !== undefined) {
+      await axios
+        .post(process.env.SLACK_WEBHOOK_URL, { text })
+        .catch((e) => console.error(e));
+    }
   }
 });
 
