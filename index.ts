@@ -15,13 +15,13 @@ const client = new Client({
 });
 
 client.on("voiceStateUpdate", async (oldState, newState) => {
-  if (oldState.channelId !== null && newState.channelId === null) {
+  if (newState.channelId === null) {
     return;
   }
-  if (
-    newState.channelId === null ||
-    !WATCH_CHANNEL_IDS.includes(newState.channelId)
-  ) {
+  if (!WATCH_CHANNEL_IDS.includes(newState.channelId)) {
+    return;
+  }
+  if (newState.channelId === oldState.channelId) {
     return;
   }
   if (newState.member === null) {
