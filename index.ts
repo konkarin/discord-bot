@@ -41,7 +41,7 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
 
     textChannel.send(text);
 
-    if (process.env.SLACK_WEBHOOK_URL !== undefined) {
+    if (process.env.SLACK_WEBHOOK_URL) {
       await axios
         .post(process.env.SLACK_WEBHOOK_URL, { text })
         .catch((e) => console.error(e));
