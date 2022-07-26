@@ -28,13 +28,18 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
     return;
   }
 
-  const channel = newState.member.guild.channels.cache.get(NOTIFY_CHANNEL_ID);
+  const textChannel =
+    newState.member.guild.channels.cache.get(NOTIFY_CHANNEL_ID);
 
   // https://discordjs.guide/additional-info/changes-in-v13.html#channel
-  if (channel !== undefined && channel.type === "GUILD_TEXT") {
-    const text = `${newState.member.displayName} さんが ${channel.name} に入室しました🥳`;
+  if (
+    textChannel !== undefined &&
+    textChannel.type === "GUILD_TEXT" &&
+    newState.channel !== null
+  ) {
+    const text = `${newState.member.displayName} さんが ${newState.channel.name} に入室しました🥳`;
 
-    channel.send(text);
+    textChannel.send(text);
 
     if (process.env.SLACK_WEBHOOK_URL !== undefined) {
       await axios
