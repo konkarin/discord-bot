@@ -2,8 +2,8 @@ require("dotenv").config();
 import { Client, Intents } from "discord.js";
 import axios from "axios";
 
-const NOTIFY_CHANNEL_ID = "997518185785991229" as const;
-const WATCH_CHANNEL_ID = "768854175022448721" as const;
+const NOTIFY_CHANNEL_ID = "927824096182554633" as const;
+const WATCH_CHANNEL_IDS = ["928805610928083035"];
 
 const client = new Client({
   // https://discordjs.guide/popular-topics/intents.html#enabling-intents
@@ -15,6 +15,18 @@ const client = new Client({
 });
 
 client.on("voiceStateUpdate", async (oldState, newState) => {
+  if (oldState.channelId !== null && newState.channelId === null) {
+    return;
+  }
+  if (
+    newState.channelId === null ||
+    !WATCH_CHANNEL_IDS.includes(newState.channelId)
+  ) {
+    return;
+  }
+  if (newState.member === null) {
+    return;
+  }
 
   const channel = newState.member.guild.channels.cache.get(NOTIFY_CHANNEL_ID);
 
